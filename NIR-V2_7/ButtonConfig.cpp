@@ -7,16 +7,16 @@
 #include <Arduino.h>
 #include "ControlPanel.h"
 
-//(GPIO)Relay selects the output voltage & LED
-#define RELAY1 26
-#define RELAY2 25   
-#define RELAY3 33
-#define RELAY4 32   //Not Used
+//(GPIO)Relay selects the output voltage & LED  (USES LOW-LEVEL TRIGGER)
+#define RELAY1        26
+#define RELAY2        25   
+#define RELAY3        33
+#define RELAY4        32   //Not Used
 
 //(GPIO)PWM selects the frequency 
-#define PWM1 27
-#define PWM2 14
-#define PWM3 12
+#define PWM1          27
+#define PWM2          14
+#define PWM3          12
 
 void b1PushCallBack(void *ptr){   //Home to CP
   ControlPanel CP(RELAY1, RELAY2, RELAY3, RELAY4, PWM1, PWM2, PWM3);

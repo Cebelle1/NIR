@@ -65,9 +65,9 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);
 
 
 NexTouch *nex_listen_list[] = {
-  &b0,&b1,
-  &b10,&b11,&b12,&sw0,&sw1,&sw2,
-  &b20,&sw20,
+  &b0,&b1,                        //Home page
+  &b10,&b11,&b12,&sw0,&sw1,&sw2,  //Control panel page
+  &b20,&sw20,                     //Session page
   NULL
 };
 

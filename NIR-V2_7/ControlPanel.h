@@ -67,10 +67,9 @@ class ControlPanel {
     int _RELAY1, _RELAY2, _RELAY3, _RELAY4;
     int _PWM1, _PWM2, _PWM3;
     int _counter;
-    double _progressBar;    //Displays status of progress bar ontop of progress bar
-    double _thisMinute;     //Displays session time in minute ontop of progress bar
+    double _progressBar;                //Displays status of progress bar ontop of progress bar
+    double _thisMinute;                 //Displays session time in minute ontop of progress bar
    
-    
   };
 
 #endif

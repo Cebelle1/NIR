@@ -72,8 +72,9 @@ void ControlPanel::Display_TempDist(double temp, uint8_t range){    //Display te
 }
 
 
-void ControlPanel::DisplayProgress(){                            //Updates progress bar of session
-  if (this->_sessionState == 1 && this->_oldSessionState == 0 && this->_onGoingSession == false){ //Session start
+void ControlPanel::DisplayProgress(){                               //Updates progress bar of session
+  if (this->_sessionState == 1 && this->_oldSessionState == 0 
+                               && this->_onGoingSession == false){  //Session start
     _oldSessionState = 1;
     cb0.getText(_sessionTimeCBox,2);
     this->_sessionTime = atoi(_sessionTimeCBox);
@@ -81,13 +82,13 @@ void ControlPanel::DisplayProgress(){                            //Updates progr
     
   } else if (this->_sessionState == 1){
     _thisMinute = minute() - _pausedMinute;
-    if (_thisMinute - this->_startTime > this->_sessionTime ){   //Session Ended
+    if (_thisMinute - this->_startTime > this->_sessionTime ){      //Session Ended
       LEDOff();
       this->_sessionTime = 0;
       this->_startTime = 0;
       this-> _onGoingSession = false;
       
-    } else {                                                     //Session Ongoing
+    } else {                                                        //Session Ongoing
       this->_onGoingSession = true;  
       _progressBar = ((_thisMinute - double(this->_startTime))/double(this->_sessionTime))*100;
       j0.setValue(uint32_t(_progressBar));
@@ -102,14 +103,15 @@ void ControlPanel::DisplayProgress(){                            //Updates progr
       Serial2.write(0xFF);
       Serial2.write(0xFF);
     }
-  } else if (this->_sessionState == 0 && this->_oldSessionState == 1 && this->_onGoingSession == true){   //Pause Session
+  } else if (this->_sessionState == 0 && this->_oldSessionState == 1 
+                                      && this->_onGoingSession == true){   //Pause Session
     this->_pausedMinute = minute() - _thisMinute;
   }
   vTaskDelay(100);
 }
 
 
-int ControlPanel::CurrentPage(){                                //Returns the current page
+int ControlPanel::CurrentPage(){                              //Returns the current page
   return _pg;
 }
 

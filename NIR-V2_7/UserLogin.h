@@ -1,5 +1,5 @@
 /*
- * UserLogin.h - Library used for handling user logins. 
+ * UserLogin.h - Library used for handling NIR's user logins. 
  * Created by Loo S H, April 4, 2022.
  */
 
@@ -12,9 +12,10 @@
 class UserLogin {
   public:
     UserLogin(int SS_PIN, int RST_PIN);
-    static int UserCardID[1];
-    bool UserCard(int rfid);
-    int ReadRFID();
+    static int UserCardID[1];                   //Stores ID of authorised cards
+    bool UserCard(int rfid);                    //Returns true if card is authorised
+    int ReadRFID();                             //Returns the RFID number
+    
   private:
     int _ssPin;
     int _rstPin;
