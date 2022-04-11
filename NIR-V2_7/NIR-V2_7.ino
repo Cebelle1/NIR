@@ -1,4 +1,4 @@
-#include <Nextion.h>
+  #include <Nextion.h>
 #include <Adafruit_MLX90614.h>
 #include <Adafruit_VL6180X.h>
 #include <MFRC522.h>
@@ -8,19 +8,19 @@
 #include "UserLogin.h"
 
 //(GPIO)Relay selects the output voltage & LED  (USES LOW-LEVEL TRIGGER)
-#define RELAY1 32
-#define RELAY2 33   
-#define RELAY3 25
-#define RELAY4 26   //Not Used
+#define RELAY1        26
+#define RELAY2        25   
+#define RELAY3        33
+#define RELAY4        32   //Not Used
 
 //(GPIO)PWM selects the frequency 
-#define PWM1 27
-#define PWM2 14
-#define PWM3 12
+#define PWM1          27
+#define PWM2          14
+#define PWM3          12
 
 //SPI Pins for RFID
-#define RST_PIN 22
-#define SS_PIN 5
+#define RST_PIN       22
+#define SS_PIN        5
 #define SPI_MOSI      23
 #define SPI_MISO      19
 #define SPI_SCK       18
@@ -37,7 +37,7 @@ NexButton b10 = NexButton(1,3, "b10"); //-Freq
 NexButton b11 = NexButton(1,4, "b11"); //+Freq
 NexButton b12 = NexButton(1,9, "b12"); //CP to Home
 NexText FreqBox = NexText(1,1, "FreqBox");
-NexDSButton sw0 = NexDSButton(1,6,"sw0"); //625nm LED   //TEST
+NexDSButton sw0 = NexDSButton(1,6,"sw0"); //625nm LED  
 NexDSButton sw1 = NexDSButton(1,7,"sw1"); //850nm LED
 NexDSButton sw2 = NexDSButton(1,8,"sw2"); //940nm LED
 
@@ -55,13 +55,14 @@ uint8_t range;
 bool loggedIn = false;
 int numberID = 0;
 
-Adafruit_MLX90614 mlx = Adafruit_MLX90614();
-double new_emissivity = 0.452381;
+Adafruit_MLX90614 mlx = Adafruit_MLX90614();        //IR Temp Sensor
+double new_emissivity = 0.452381;                   //Refer to datasheet for formula
 
-Adafruit_VL6180X vl = Adafruit_VL6180X(0x29);
+Adafruit_VL6180X vl = Adafruit_VL6180X(0x29);       //Time of Flight (ToF) Distance sensor
 ControlPanel CP(RELAY1, RELAY2, RELAY3, RELAY4, PWM1, PWM2, PWM3);
 UserLogin Login(SS_PIN,RST_PIN);
 MFRC522 mfrc522(SS_PIN, RST_PIN);
+
 
 NexTouch *nex_listen_list[] = {
   &b0,&b1,
@@ -92,8 +93,6 @@ void setup() {
   pinMode(PWM2, OUTPUT);
   pinMode(PWM3, OUTPUT);
   
-  //nexInit();
-  
   CP.LEDOff();  //Turn off all relays
   
   FreqBox.setText(FREQUENCY);
@@ -113,13 +112,9 @@ void setup() {
   
   if (!mlx.begin(0x5A)) {
     Serial.println("Error connecting to MLX sensor.");
-    Serial.println("Error connecting to MLX sensor.");
-    Serial.println("Error connecting to MLX sensor.");
   }
 
   if (!vl.begin()) {
-    Serial.println("Failed to connect to ToF sensor.");
-    Serial.println("Failed to connect to ToF sensor.");
     Serial.println("Failed to connect to ToF sensor.");
   }
   mlx.writeEmissivity(new_emissivity);

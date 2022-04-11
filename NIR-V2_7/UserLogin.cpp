@@ -29,15 +29,14 @@ int UserLogin::ReadRFID() {
   MFRC522 mfrc522(_ssPin, _rstPin);
   _rfidByte = 0;
   if (!mfrc522.PICC_IsNewCardPresent()) {
-    Serial.println("Not Logged In");
     vTaskDelay(100);
   }
 
   if (!mfrc522.PICC_ReadCardSerial()) {
-    Serial.println("Not Logged In 2");
+    vTaskDelay(100);
   }
   _rfidByte = mfrc522.uid.uidByte[1];  //Read card value and store into the variable "RFID"
-  Serial.print("Reading=");
-  Serial.println(_rfidByte);
+  //Serial.print("Reading=");
+  //Serial.println(_rfidByte);
   return _rfidByte;
 }

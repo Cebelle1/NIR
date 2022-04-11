@@ -8,16 +8,16 @@
 #include <Arduino.h>
 #include <Nextion.h>
 
-//To store the state of buttons etc.
-int ControlPanel::_pg = 0;
-int ControlPanel::_sessionState = 0;
-int ControlPanel::_stateArray[3] = {0, 0, 0};
-int ControlPanel::_sessionTime = 0;
-int ControlPanel::_startTime = 0;
-int ControlPanel::_oldSessionState = 0;
-bool ControlPanel::_onGoingSession = false;
-double ControlPanel::_pausedMinute = 0;
-int ControlPanel::_frequency = 60;
+//Static variables are used to store states throughout the runtime
+int ControlPanel::_pg = 0;                        //Stores the current page
+int ControlPanel::_frequency = 60;                //Stores the selected frequency
+int ControlPanel::_sessionTime = 0;               //Stores the remaining time to run for the session
+int ControlPanel::_startTime = 0;                 //Stores the time when session starts
+int ControlPanel::_oldSessionState = 0;           //Stores the previous state of the start button
+int ControlPanel::_sessionState = 0;              //Stores the state of the start button (ON/OFF) 
+bool ControlPanel::_onGoingSession = false;       //Stores the state of the current session (PAUSED/STOPPED)
+double ControlPanel::_pausedMinute = 0;           //Stores the amount of time past since pause 
+int ControlPanel::_stateArray[3] = {0, 0, 0};     //Stores the state of the LED switches    (ON/OFF for each LED)
 
 
 ControlPanel::ControlPanel(int RELAY1, int RELAY2, int RELAY3, int RELAY4, int PWM1, int PWM2, int PWM3){
@@ -44,8 +44,17 @@ void ControlPanel::DisplayPage(int pg){                 //Change page
 
 
 void ControlPanel::Display_TempDist(double temp, uint8_t range){    //Display temperature and distance
-  _degC = String(temp);
-  _range = String(range);
+  if (temp > 0){
+    _degC = String(temp);
+  } else {
+    _degC = "Sensor error";
+  }
+  
+  if (range != 255){
+    _range = String(range);
+  } else {
+    _range = "";
+  }
   
   Serial2.print("t2.txt=\"");   //Use Serial2.print, rather than library's .setText, for smoother display (in this case)
   Serial2.print(_degC);  
@@ -60,12 +69,10 @@ void ControlPanel::Display_TempDist(double temp, uint8_t range){    //Display te
   Serial2.write(0xFF);  
   Serial2.write(0xFF);
   Serial2.write(0xFF);
- 
 }
 
 
-void ControlPanel::DisplayProgress(){             //Updates progress bar of session
-  
+void ControlPanel::DisplayProgress(){                            //Updates progress bar of session
   if (this->_sessionState == 1 && this->_oldSessionState == 0 && this->_onGoingSession == false){ //Session start
     _oldSessionState = 1;
     cb0.getText(_sessionTimeCBox,2);
@@ -74,14 +81,13 @@ void ControlPanel::DisplayProgress(){             //Updates progress bar of sess
     
   } else if (this->_sessionState == 1){
     _thisMinute = minute() - _pausedMinute;
-    if (_thisMinute - this->_startTime > this->_sessionTime ){  //Session Ended
+    if (_thisMinute - this->_startTime > this->_sessionTime ){   //Session Ended
       LEDOff();
       this->_sessionTime = 0;
       this->_startTime = 0;
-      //_progressBar = 0;
-      //j0.setValue(uint32_t(0));
+      this-> _onGoingSession = false;
       
-    } else {  //Session Ongoing
+    } else {                                                     //Session Ongoing
       this->_onGoingSession = true;  
       _progressBar = ((_thisMinute - double(this->_startTime))/double(this->_sessionTime))*100;
       j0.setValue(uint32_t(_progressBar));
@@ -99,21 +105,21 @@ void ControlPanel::DisplayProgress(){             //Updates progress bar of sess
   } else if (this->_sessionState == 0 && this->_oldSessionState == 1 && this->_onGoingSession == true){   //Pause Session
     this->_pausedMinute = minute() - _thisMinute;
   }
-
   vTaskDelay(100);
 }
 
 
-int ControlPanel::CurrentPage(){                    //Returns the current page
+int ControlPanel::CurrentPage(){                                //Returns the current page
   return _pg;
 }
 
 
-void ControlPanel::LEDIndex(int startState){      //LED output control
+void ControlPanel::LEDIndex(int startState){                  //LED output control
   //Relay Module uses Low Level Trigger (Inverse Logic)
   if (startState){
     if (_stateArray[0]){
       digitalWrite(_RELAY1, LOW);
+      digitalWrite(_RELAY4, LOW);
     } else {
       digitalWrite(_RELAY1, HIGH);
     }
@@ -137,7 +143,6 @@ void ControlPanel::LEDIndex(int startState){      //LED output control
 
 void ControlPanel::CurrentInt(){                 //Gets the current switch state and updates stateArray
   uint32_t dual_state;
-  
   sw0.getValue(&dual_state);
   _stateArray[0] = dual_state;
   sw1.getValue(&dual_state);
@@ -148,9 +153,12 @@ void ControlPanel::CurrentInt(){                 //Gets the current switch state
 }
 
 
-void ControlPanel::LEDFreq(){                   //LED PWM Control (Running on second core)
+void ControlPanel::LEDFreq(){                     //LED PWM Control (Running on second core)
   _period = (1/this->_frequency) * 1000;
-
+  /*digitalWrite(_PWM1,HIGH);
+  digitalWrite(_PWM2,HIGH);
+  digitalWrite(_PWM3,HIGH);*/
+  
   if (_stateArray[0]){
     digitalWrite(_PWM1, HIGH);
     delayMicroseconds(_period);
@@ -180,8 +188,7 @@ void ControlPanel::LEDFreq(){                   //LED PWM Control (Running on se
 }
 
 
-void ControlPanel::FreqControl(int freqCon){    //FreqBox (text) display
-  
+void ControlPanel::FreqControl(int freqCon){        //FreqBox (text) display
   _freq = CurrentFreq();
 
   if (freqCon == 0 && _freq > 10){
@@ -200,8 +207,7 @@ void ControlPanel::FreqControl(int freqCon){    //FreqBox (text) display
 }
 
 
-int ControlPanel::CurrentFreq(){              //Returns the current frequency in hertz
-  
+int ControlPanel::CurrentFreq(){                  //Returns the current frequency in hertz
   char freq_box[2];
   FreqBox.getText(freq_box,2);
   _getFreq =atoi(freq_box);
@@ -210,9 +216,8 @@ int ControlPanel::CurrentFreq(){              //Returns the current frequency in
 
 
 
-void ControlPanel::StartSession(){            //Starts the session
+void ControlPanel::StartSession(){                //Starts the session
   uint32_t startButton;
-  
   sw20.getValue(&startButton);
   _oldSessionState = _sessionState;
   if(startButton){
@@ -225,7 +230,7 @@ void ControlPanel::StartSession(){            //Starts the session
 }
 
 
-int ControlPanel::GetSessionTime(){           //Returns the selected session time
+int ControlPanel::GetSessionTime(){               //Returns the selected session time
   char sessionTime[2];
   cb0.getText(sessionTime,2);
   this->_sessionTime = atoi(sessionTime);
@@ -233,8 +238,7 @@ int ControlPanel::GetSessionTime(){           //Returns the selected session tim
 }
 
 
-void ControlPanel::PrevSelection(){           //Restores the previous button selections when returning to the same page in a single session
-  
+void ControlPanel::PrevSelection(){               //Restores the previous button selections when returning to the same page in a single session
     if (_pg == 1){
       sw0.setValue(_stateArray[0]);
       sw1.setValue(_stateArray[1]);
@@ -258,7 +262,7 @@ void ControlPanel::PrevSelection(){           //Restores the previous button sel
 }
 
 
-void ControlPanel::LEDOff(){                  //Turns off all LEDs
+void ControlPanel::LEDOff(){                      //Turns off all LEDs
 /*
  * _RELAY4 is not used,
  * SSR modules runs on Low Level Trigger (Inverse Logic)
@@ -270,7 +274,7 @@ void ControlPanel::LEDOff(){                  //Turns off all LEDs
 }
 
 
-void ControlPanel::LEDOn(){                   //Turns on all LEDs
+void ControlPanel::LEDOn(){                       //Turns on all LEDs
 /*
  * _RELAY4 is not used,
  * SSR modules runs on Low Level Trigger (Inverse Logic)

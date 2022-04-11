@@ -8,10 +8,10 @@
 #include "ControlPanel.h"
 
 //(GPIO)Relay selects the output voltage & LED
-#define RELAY1 32
-#define RELAY2 33   
-#define RELAY3 25
-#define RELAY4 26   //Not Used
+#define RELAY1 26
+#define RELAY2 25   
+#define RELAY3 33
+#define RELAY4 32   //Not Used
 
 //(GPIO)PWM selects the frequency 
 #define PWM1 27
