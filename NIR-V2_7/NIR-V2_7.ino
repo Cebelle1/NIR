@@ -1,4 +1,4 @@
-  #include <Nextion.h>
+#include <Nextion.h>
 #include <Adafruit_MLX90614.h>
 #include <Adafruit_VL6180X.h>
 #include <MFRC522.h>
