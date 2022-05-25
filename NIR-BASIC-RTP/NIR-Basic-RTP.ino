@@ -53,7 +53,7 @@ void bt0PushCallBack(void *ptr){
 }
 
 void lowMode(){
-  digitalWrite(DRIVER1, HIGH);
+  /*digitalWrite(DRIVER1, HIGH);
   delayMicroseconds(3330);
   digitalWrite(DRIVER1,LOW);
   digitalWrite(DRIVER2,HIGH);
@@ -62,9 +62,9 @@ void lowMode(){
   digitalWrite(DRIVER3,HIGH);
   delayMicroseconds(3330);
   DriverOff();
-  delay(30);
+  delay(30);*/
  
-  /*digitalWrite(DRIVER1, LOW);
+  digitalWrite(DRIVER1, LOW);
   delayMicroseconds(3330);
   digitalWrite(DRIVER1,HIGH);
   digitalWrite(DRIVER2,LOW);
@@ -72,8 +72,8 @@ void lowMode(){
   digitalWrite(DRIVER2,HIGH);
   digitalWrite(DRIVER3,LOW);
   delayMicroseconds(3330);
-  DriverOn();
-  delay(30);*/
+  DriverOff();
+  delay(30);
 }
 
 void bt1PushCallBack(void *ptr){
@@ -84,7 +84,7 @@ void bt1PushCallBack(void *ptr){
 }
 
 void mediumMode(){
-  digitalWrite(DRIVER1, HIGH);
+  /*digitalWrite(DRIVER1, HIGH);
   delayMicroseconds(4500);
   digitalWrite(DRIVER1,LOW);
   digitalWrite(DRIVER2,HIGH);
@@ -93,9 +93,9 @@ void mediumMode(){
   digitalWrite(DRIVER3,HIGH);
   delayMicroseconds(4500);
   DriverOff();
-  delayMicroseconds(26500);
+  delayMicroseconds(26500);*/
   
-  /*digitalWrite(DRIVER1, LOW);
+  digitalWrite(DRIVER1, LOW);
   delayMicroseconds(4500);
   digitalWrite(DRIVER1,HIGH);
   digitalWrite(DRIVER2,LOW);
@@ -103,8 +103,8 @@ void mediumMode(){
   digitalWrite(DRIVER2,HIGH);
   digitalWrite(DRIVER3,LOW);
   delayMicroseconds(4500);
-  DriverOn();
-  delayMicroseconds(26500);*/
+  DriverOff();
+  delayMicroseconds(26500);
 }
 
 void bt2PushCallBack(void *ptr){
@@ -115,7 +115,7 @@ void bt2PushCallBack(void *ptr){
 }
 
 void highMode(){
-  digitalWrite(DRIVER1, HIGH);
+  /*digitalWrite(DRIVER1, HIGH);
   delayMicroseconds(6670);
   digitalWrite(DRIVER1,LOW);
   digitalWrite(DRIVER2,HIGH);
@@ -124,9 +124,9 @@ void highMode(){
   digitalWrite(DRIVER3,HIGH);
   delayMicroseconds(6670);
   DriverOff();
-  delay(20);
+  delay(20);*/
   
-  /*digitalWrite(DRIVER1, LOW);
+  digitalWrite(DRIVER1, LOW);
   delayMicroseconds(6670);
   digitalWrite(DRIVER1,HIGH);
   digitalWrite(DRIVER2,LOW);
@@ -134,8 +134,8 @@ void highMode(){
   digitalWrite(DRIVER2,HIGH);
   digitalWrite(DRIVER3,LOW);
   delayMicroseconds(6670);
-  DriverOn();
-  delay(20);*/
+  DriverOff();
+  delay(20);
 }
 
 void bt3PushCallBack(void *ptr){
