@@ -43,11 +43,7 @@ void ControlPanel::DisplayPage(int pg){                 //Change page
 
 
 void ControlPanel::DisplayDist(uint8_t range){    //Display distance
-  if (range != 255){
-    _range = String(range);
-  } else {
-    _range = "";
-  }
+  _range = (range != 255)? String(range) : "";
   
   Serial2.print("DistBox.txt=\"");  
   Serial2.print(_range);  
@@ -59,11 +55,7 @@ void ControlPanel::DisplayDist(uint8_t range){    //Display distance
 
 
 void ControlPanel::DisplayTemp(double temp){    //Display Temperature Graph and Valuebox
-  if (temp > 0){
-    _degC = String(temp);
-  } else {
-    _degC = "Sensor error";
-  }
+  _degC = (temp > 0)? String(temp) : "Sensor Error";
   
   Serial2.print("TempBox.txt=\"");   //Use Serial2.print, rather than library's .setText, for smoother display (in this case)
   Serial2.print(_degC);  
@@ -179,11 +171,7 @@ void ControlPanel::StartSession(){                //Starts the session
   uint32_t startButton;
   sw20.getValue(&startButton);
   _oldSessionState = _sessionState;
-  if(startButton){
-    _sessionState = 1;
-  } else {
-    _sessionState = 0;
-  }
+  _sessionState = startButton? 1 : 0;
 }
 
 
