@@ -24,9 +24,7 @@
 TFT_eSPI tft = TFT_eSPI();
 
 const unsigned long timeout = 30000; // 30 seconds
-
 const int buttonPin = 4;    // the number of the pushbutton pin
-int pictureNumber = 0;
 
 Cam_Tft_Drive CTD;
 
@@ -102,71 +100,13 @@ void setup() {
 
 }
 
-
-camera_fb_t* capture(){
-  camera_fb_t *fb = NULL;
-  esp_err_t res = ESP_OK;
-  fb = esp_camera_fb_get();
-  return fb;
-}
-
-void showingImage(){
-  camera_fb_t *fb = capture();
-  if(!fb || fb->format != PIXFORMAT_JPEG){
-    Serial.println("Camera capture failed");
-    esp_camera_fb_return(fb);
-    return;
-  }else{
-    TJpgDec.drawJpg(0,0,(const uint8_t*)fb->buf, fb->len);
-    esp_camera_fb_return(fb);
-  }
-}
-
-void saveToSD(){
-  
-  if(!SD_MMC.begin()){
-    Serial.println("SD Card Mount Failed");
-  }
-  
-  camera_fb_t *fb = capture();   
-  
-  if(!fb || fb->format != PIXFORMAT_JPEG){
-    Serial.println("Camera capture failed");
-    esp_camera_fb_return(fb);
-    return;
-    
-  }else{
-    pictureNumber = EEPROM.read(0) + 1;
-    String path = String(CTD.checkDir())+ "/picture" + String(pictureNumber) +".jpg";
-
-    fs::FS &fs = SD_MMC; 
-    Serial.printf("Picture file name: %s\n", path.c_str());
-    File file = fs.open(path.c_str(), FILE_WRITE);
-    
-    if(!file){
-      Serial.println("Failed to open file in writing mode");
-    } 
-    else {
-      file.write(fb->buf, fb->len);                               // payload (image), payload length
-      Serial.printf("Saved file to path: %s\n", path.c_str());
-      EEPROM.write(0, pictureNumber);                             //update picture number
-      EEPROM.commit();
-    }
-    file.close();
-    esp_camera_fb_return(fb); 
-  }
-  EEPROM.write(1,0);                                              //set to savetoSD mode
-  EEPROM.commit();
-  ESP.restart();
-}
-
-
 void loop() {
   if (EEPROM.read(1) == 0){
     CTD.buttonEvent(buttonPin);
-    showingImage();
-  } else if (EEPROM.read(1) == 1){
-    saveToSD();
+    CTD.showingImage();
+  } else if (EEPROM.read(1) == 1){    
+    CTD.sendCapturedImage();          //(Do not switch the order) Send image first
+    CTD.saveToSD();                   //Then saveToSD, which will reset CAM to streaming mode
   }
   
 }
