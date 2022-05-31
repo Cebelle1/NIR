@@ -30,14 +30,14 @@ class Cam_Tft_Drive{
     void printLocalTime();
     void showingImage();
     void saveToSD();
-    
-    const char* ssid;
-    const char* password;
 
     String sendCapturedImage();
     String urlencode(String str);
     
   private:
+    const char* _ssid;
+    const char* _password;
+    
     int _buttonState;             
     int _lastButtonState = LOW;   
     unsigned long _lastDebounceTime = 0;  // the last time the output pin was toggled

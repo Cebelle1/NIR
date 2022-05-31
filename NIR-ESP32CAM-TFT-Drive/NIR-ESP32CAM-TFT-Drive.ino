@@ -1,6 +1,14 @@
 /*
- *  Adapted from Vivian Ng's ESP32CAM_TFT &
- *  Rui Santo's tutorial "ESP32-CAM Take Photo and Save to MicroSD Card"
+ *  Adapted from Vivian Ng's ESP32CAM_TFT,
+ *  Rui Santo's tutorial "ESP32-CAM Take Photo and Save to MicroSD Card" &
+ *  Electroclinic's ESP32CAM send images to Google Drive
+ *  
+ *  Important Note: Please ensure WiFi connection, else program will not work. 
+ *  WiFi SSID and Password can be changed in the Cam_Tft_Drive source code's constructor. 
+ *  
+ *  Note: When uploading this to a new ESP32-CAM, to ensure it works as programmed,
+ *  please manually write 0 into the EEPROM for both register 0 and 1. 
+ *  (EEPROM.write(0,0); EEPROM.write(1,0))
  */
 
 #include <Arduino.h>
@@ -16,7 +24,6 @@
 #include <TimeLib.h>
 #include "time.h"
 #include "Cam_Tft_Drive.h"
-
 #define GFXFF 1
 #define FSB9 &FreeSerifBold9pt7b
 #define EEPROM_SIZE 2 //Update pic no. up to 256
@@ -40,10 +47,6 @@ void setup() {
   Serial.begin(115200);
   pinMode(buttonPin, INPUT);
   
-  TJpgDec.setJpgScale(1);           
-  TJpgDec.setSwapBytes(true);
-  TJpgDec.setCallback(tft_output);
-  
   camera_config_t config;           
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
@@ -63,13 +66,16 @@ void setup() {
   config.pin_sscb_scl = SIOC_GPIO_NUM;
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
-  config.xclk_freq_hz = 10000000;
+  config.xclk_freq_hz = 20000000;
   config.pixel_format = PIXFORMAT_JPEG;
   
   EEPROM.begin(EEPROM_SIZE);
 
   if (EEPROM.read(1) == 0){             //Stream camera
-
+      
+    TJpgDec.setJpgScale(1);           
+    TJpgDec.setSwapBytes(true);
+    TJpgDec.setCallback(tft_output);
     //Init display
     tft.begin();
     tft.setRotation(1);
@@ -97,6 +103,10 @@ void setup() {
     Serial.printf("Camera init failed with error 0x%x", err);
     return;
   }
+
+  //drop down frame size for higher initial frame rate
+  sensor_t * s = esp_camera_sensor_get();
+  s->set_framesize(s, FRAMESIZE_VGA);  // UXGA|SXGA|XGA|SVGA|VGA|CIF|QVGA|HQVGA|QQVGA
 
 }
 

@@ -1,10 +1,9 @@
 #include "Cam_Tft_Drive.h"
 #include <Arduino.h>
 
-const char* ssid = "CebelleLaptop";  // Change to own SSID
-const char* password = "123456789"; // Change to own WiFi password
-
 Cam_Tft_Drive::Cam_Tft_Drive(){
+  _ssid = "CebelleLaptop";
+  _password = "123456789";
 }
 
 camera_fb_t* capture(){
@@ -42,7 +41,7 @@ String Cam_Tft_Drive::checkDir(){
   } else {
     Serial.println("Creating file for today");
     fs.mkdir(dirPath.c_str());
-    EEPROM.write(0,0);                                             //reset pictureNumber to 0 everyday
+    EEPROM.write(0,0);                               //reset pictureNumber to 0 everyday
     EEPROM.commit();
   }
   return dirPath;
@@ -55,15 +54,8 @@ String Cam_Tft_Drive::currDate(){
   const long gmtOffset_sec = 28800;
   const int daylightOffset_sec = 1;
   
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED){
-    delay(500);
-    Serial.print(".");
-  }
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   printLocalTime();
-  WiFi.disconnect(true);
-  WiFi.mode(WIFI_OFF);
     
   struct tm timeinfo;
   char dd[3];
@@ -119,9 +111,8 @@ void Cam_Tft_Drive::saveToSD(){
     return;
     
   }else{
-    _pictureNumber = EEPROM.read(0) + 1;
     String path = String(checkDir())+ "/picture" + String(_pictureNumber) +".jpg";
-
+    _pictureNumber = EEPROM.read(0) + 1;
     fs::FS &fs = SD_MMC; 
     Serial.printf("Picture file name: %s\n", path.c_str());
     File file = fs.open(path.c_str(), FILE_WRITE);
@@ -146,16 +137,26 @@ void Cam_Tft_Drive::saveToSD(){
 //---------------Send to Drive functions-------------//
 
 String Cam_Tft_Drive::sendCapturedImage() {
+  
+  long int StartTime=millis();
+  while (WiFi.status() != WL_CONNECTED) 
+  {
+    WiFi.begin(_ssid, _password); 
+    delay(500);
+    Serial.print(".");
+  } 
+  
   String myScript = "/macros/s/AKfycbwauOMgIuxKscX76fV2I9kZ9AmVtSJNJpTLV9I0Or86V_TBXh3R1jDgXfDXkWYhhnru/exec";
   String myLineNotifyToken = "myToken=**********";    //Line Notify Token. You can set the value of xxxxxxxxxx empty if you don't want to send picture to Linenotify.
   String myFoldername = "&myFoldername=NIRCameraImages";
-  String myFilename = "&myFilename=" + String(EEPROM.read(0)) + ".jpg";
+  String myFilename = "&myFilename=ESP-CAM.jpg";
   String myImage = "&myFile=";
   const char* myDomain = "script.google.com";
   String getAll="", getBody = "";
   
   camera_fb_t * fb = NULL;
-  fb = esp_camera_fb_get();  
+  fb = esp_camera_fb_get(); 
+   
   if(!fb) {
     Serial.println("Camera capture failed");
     delay(1000);
@@ -193,16 +194,16 @@ String Cam_Tft_Drive::sendCapturedImage() {
     }
     esp_camera_fb_return(fb);
     
-    int waitTime = 10000;   // timeout 10 seconds
+    int waitTime = 100000;   // timeout 10 seconds
     long startTime = millis();
     boolean state = false;
     
     while ((startTime + waitTime) > millis())
     {
-      Serial.print(".");
-      delay(100);      
-      while (client_tcp.available()) 
-      {
+      Serial.print(",");
+      delay(100);    
+      
+      while (client_tcp.available()) {
           char c = client_tcp.read();
           if (state==true) getBody += String(c);        
           if (c == '\n') 
