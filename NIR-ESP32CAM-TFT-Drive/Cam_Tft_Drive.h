@@ -37,7 +37,7 @@ class Cam_Tft_Drive{
   private:
     const char* _ssid;
     const char* _password;
-    
+
     int _buttonState;             
     int _lastButtonState = LOW;   
     unsigned long _lastDebounceTime = 0;  // the last time the output pin was toggled

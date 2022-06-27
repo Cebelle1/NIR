@@ -146,10 +146,11 @@ String Cam_Tft_Drive::sendCapturedImage() {
     Serial.print(".");
   } 
   
-  String myScript = "/macros/s/AKfycbwauOMgIuxKscX76fV2I9kZ9AmVtSJNJpTLV9I0Or86V_TBXh3R1jDgXfDXkWYhhnru/exec";
+  String myScript = "/macros/s/AKfycbxpeW2FOdQeUIaQmyhjKsQGhVXQVgwMRZ9BNRD3dS7krf5JLP7yMuK_Zn_O2luowq11/exec";
   String myLineNotifyToken = "myToken=**********";    //Line Notify Token. You can set the value of xxxxxxxxxx empty if you don't want to send picture to Linenotify.
   String myFoldername = "&myFoldername=NIRCameraImages";
-  String myFilename = "&myFilename=ESP-CAM.jpg";
+  String mySubFoldername = currDate();
+  String myFilename = "&myFilename=picture" + String(EEPROM.read(0)) + ".jpg";
   String myImage = "&myFile=";
   const char* myDomain = "script.google.com";
   String getAll="", getBody = "";
