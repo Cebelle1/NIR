@@ -14,6 +14,7 @@ class UserLogin {
     UserLogin(int SS_PIN, int RST_PIN);
     static int UserCardID[1];                   //Stores ID of authorised cards
     bool UserCard(int rfid);                    //Returns true if card is authorised
+    bool OTACard(int rfid);                     //Returns true if card is OTA card
     int ReadRFID();                             //Returns the RFID number
     
   private:

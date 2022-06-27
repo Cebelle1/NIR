@@ -30,6 +30,15 @@ bool UserLogin::UserCard(int _rfid){          //Returns true if card is authoris
 }
 
 
+bool UserLogin::OTACard(int _rfid){
+  if (_rfid == 99){
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
 int UserLogin::ReadRFID() {                   //Returns the RFID number
   MFRC522 mfrc522(_ssPin, _rstPin);
   _rfidByte = 0;

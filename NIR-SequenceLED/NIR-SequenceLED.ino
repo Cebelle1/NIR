@@ -1,8 +1,19 @@
+/*
+ * This version of the code is used for Intelligent Series Display, with sequencing NIR leds and OTA function.
+ * 
+ * In order  for OTA to work, WiFi must be connected.
+ */
 #include <Nextion.h>
 #include <Adafruit_MLX90614.h>
 #include <Adafruit_VL6180X.h>
 #include <MFRC522.h>
 #include <SPI.h>
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <WebServer.h>
+#include <ESPmDNS.h>
+#include <Update.h>
+#include "WebServer.h"
 #include "ControlPanel.h"
 #include "ButtonConfig.h"
 #include "UserLogin.h"
@@ -19,19 +30,21 @@
 #define SPI_MISO      19
 #define SPI_SCK       18
 
-TaskHandle_t DualCore;
+//Configs for WiFi and OTA
+IPAddress local_IP(192, 168, 137, 200);   
+IPAddress gateway(192, 168, 0, 1);
+IPAddress subnet(255, 255, 0, 0);
+WebServer server(80);
+const char* host = "esp32";
+const char * ssid = "CebelleLaptop";
+const char * password = "123456789";
+
 
 //page, id, objName (refer to Nextion Editor)
-//Home Buttons (page 0)
 NexButton b0 = NexButton(0,3,"b0");   //Home to Session
-NexButton b1 = NexButton(0,4,"b1");   //Home to Temperature Graph
 
-//Session Buttons (page 2)
 NexButton b20 = NexButton(2,5,"b20"); //Session to Home
 NexDSButton sw20 = NexDSButton(2,3,"sw0"); //Start Session
-
-//Temperature Buttons (page 5)
-NexButton b50 = NexButton(5,5,"b50");
 
 int counter = 0;  //for setting up page
 
@@ -51,18 +64,56 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);
 
 
 NexTouch *nex_listen_list[] = {
-  &b0,&b1,                            //Home page
+  &b0,                                //Home page
   &b20,&sw20,                         //Session page
-  &b50,                               //Temperature Graph page
   NULL
 };
 
-void SecondCore(void * parameter){
-  while(1){
-    CP.DisplayProgress();
-    CP.LEDIndex();
-    //vTaskDelay(1);        //Add if keep crashing
+//OTA Webserver
+void StartServer(){
+  /*use mdns for host name resolution*/
+  if (!MDNS.begin(host)) { //http://esp32.local
+    Serial.println("Error setting up MDNS responder!");
+    while (1) {
+      delay(1000);
+    }
   }
+  Serial.println("mDNS responder started");
+  /*return index page which is stored in serverIndex */
+  server.on("/", HTTP_GET, []() {
+    server.sendHeader("Connection", "close");
+    server.send(200, "text/html", loginIndex);
+  });
+  server.on("/serverIndex", HTTP_GET, []() {
+    server.sendHeader("Connection", "close");
+    server.send(200, "text/html", serverIndex);
+  });
+  /*handling uploading firmware file */
+  server.on("/update", HTTP_POST, []() {
+    server.sendHeader("Connection", "close");
+    server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+    ESP.restart();
+  }, []() {
+    HTTPUpload& upload = server.upload();
+    if (upload.status == UPLOAD_FILE_START) {
+      Serial.printf("Update: %s\n", upload.filename.c_str());
+      if (!Update.begin(UPDATE_SIZE_UNKNOWN)) { //start with max available size
+        Update.printError(Serial);
+      }
+    } else if (upload.status == UPLOAD_FILE_WRITE) {
+      /* flashing firmware to ESP*/
+      if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
+        Update.printError(Serial);
+      }
+    } else if (upload.status == UPLOAD_FILE_END) {
+      if (Update.end(true)) { //true to set the size to the current progress
+        Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
+      } else {
+        Update.printError(Serial);
+      }
+    }
+  });
+  server.begin();
 }
 
 
@@ -79,11 +130,10 @@ void setup() {
   CP.DisplayPage(3);
   delay(3000);
   CP.DisplayPage(4);
+  
   b0.attachPush(b0PushCallBack,&b0);
-  b1.attachPush(b1PushCallBack,&b1);
   b20.attachPush(b20PushCallBack,&b20);
   sw20.attachPush(sw20PopCallBack,&sw20);
-  b50.attachPush(b20PushCallBack,&b50);
   
   if (!mlx.begin(0x5A)) {
     Serial.println("Error connecting to MLX sensor.");
@@ -98,42 +148,64 @@ void setup() {
   mfrc522.PCD_Init();
   mfrc522.PCD_DumpVersionToSerial();
 
-  xTaskCreatePinnedToCore(SecondCore, "DualCore", 10000, NULL, 1, &DualCore, 0);
+  //REMOVE THIS LINE IN NORMAL CODE, LOGGIN IN IS DISABLED FOR NOW
+  CP.DisplayPage(0);
 }
 
 void loop() {
-  while(loggedIn == false){   //Waits for authentication (login)
+  /*while(loggedIn == false){   //Waits for authentication (login)
     numberID = Login.ReadRFID();
-    if (Login.UserCard(numberID) == true){
+    
+    if (Login.UserCard(numberID) == true && Login.OTACard(numberID) == false){
       loggedIn = true;
       CP.DisplayPage(0);
-    } else {
-      loggedIn = false;
-    }
-  }
+    } else if (Login.OTACard(numberID) == true) {
+      WiFi.begin(ssid, password);
+      while (WiFi.status() != WL_CONNECTED) {
+        Serial2.print("t0.txt=\"");
+        Serial2.print("No WiFi");
+        Serial2.print("\"");
+        Serial2.write(0xFF);
+        Serial2.write(0xFF);
+        Serial2.write(0xFF);
+        delay(100);
+      }
+      Serial2.print("t0.txt=\"");
+      Serial2.print(String(WiFi.localIP()));
+      Serial2.print("\"");
+      Serial2.write(0xFF);
+      Serial2.write(0xFF);
+      Serial2.write(0xFF);
+      StartServer();              //Set the WebServer for GUI
+      while(1){
+        server.handleClient();
+        delay(1);
+      }
+    } 
+  }*/
+  
   nexLoop(nex_listen_list);             //Listens for button events
-
-  temp = mlx.readObjectTempC();
-  CP.UpdateTemp(temp);
+  
+  Serial.println("Running");
   
   if (CP.CurrentPage() == 0){           //Home Page
-    range = vl.readRange();
+    //REMOVE THIS LINE IN NORMAL CODE, NO SENSORS ATTACHED WILL STOP THE CODE WITHOUT ANY ERROR THROWN
+    /*range = vl.readRange(); 
     CP.DisplayDist(range);
+    temp = mlx.readObjectTempC();
+    CP.DisplayTemp(temp);*/
     counter = 0;
     
   } else if (CP.CurrentPage() == 2){      //Session Page
+    //try removing if for page for page 2 and 5 for continuous recording of the functions
+    
     if (counter == 0){  
       CP.PrevSelection();
       counter = 2;
     }
-    /*  Shift to dual core process, to be confirmed.
-    CP.DisplayProgress();
-    CP.LEDIndex();*/
     
-  } else if (CP.CurrentPage() == 5) {   //Temperature Graph Page
-    CP.DisplayTemp(temp);
-    CP.PlotTemp(counter);
-    counter = 1;
-  }
-  delay(5);
+    CP.DisplayProgress();
+    CP.LEDIndex();
+  } 
+  
 }

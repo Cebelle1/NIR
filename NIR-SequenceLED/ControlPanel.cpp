@@ -17,10 +17,6 @@ int ControlPanel::_oldSessionState = 0;           //Stores the previous state of
 int ControlPanel::_sessionState = 0;              //Stores the state of the start button (ON/OFF) 
 bool ControlPanel::_onGoingSession = false;       //Stores the state of the current session (PAUSED/STOPPED)
 double ControlPanel::_pausedMinute = 0;           //Stores the amount of time past since pause 
-int ControlPanel::_tempArray[600];                //Stores temperature
-int ControlPanel::_arrayIndexCounter = 0;
-int ControlPanel::_oldArrayIC = 0;
-int _graphInterval = 5; //seconds
 
 
 ControlPanel::ControlPanel(int DRIVER1, int DRIVER2, int DRIVER3){
@@ -65,7 +61,7 @@ void ControlPanel::DisplayTemp(double temp){    //Display Temperature Graph and 
   Serial2.write(0xFF);
 }
 
-
+/* 
 void ControlPanel::UpdateTemp(double temp){     //Updates _tempArray
   int elapsedTime = second();
   _oldArrayIC = _arrayIndexCounter;
@@ -96,7 +92,7 @@ void ControlPanel::PlotTemp(int counter){
   }
   vTaskDelay(3);
 }
-
+*/
 
 void ControlPanel::DisplayProgress(){                               //Updates progress bar of session
   if (this->_sessionState == 1 && this->_oldSessionState == 0 

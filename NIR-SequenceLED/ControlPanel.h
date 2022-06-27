@@ -27,12 +27,10 @@ class ControlPanel {
     void DisplayPage(int pg);                                 //Change page
     void DisplayDist(uint8_t range);                          //Display distance
     void DisplayTemp(double temp);                            //Display temperature
-    void UpdateTemp(double temp);                             //Updates _tempArray
-    void PlotTemp(int counter);                               //Plot the temperature grah
     void DisplayProgress();                                   //Updates progress bar of session
     static int CurrentPage();                                 //Returns the current page
     
-    void LEDIndex();                            //LED output control
+    void LEDIndex();                                          //LED output control
     void CurrentInt();                                        //Gets the current switch state (sw0-sw2) and updates stateArray
     
     void StartSession();                                      //Starts the session
@@ -55,23 +53,16 @@ class ControlPanel {
     static int _sessionState;           //Stores the state of the start button (ON/OFF)        
     static bool _onGoingSession;        //Stores the state of the current session (PAUSED/STOPPED)
     static double _pausedMinute;        //Stores the amount of time past since pause 
-    static int _tempArray[600];         //Stores temperature
-    static int _arrayIndexCounter;  
-    static int _oldArrayIC;
 
     String _stringPage = "page page";   //Used in change page command for Nextion
     String _range, _degC;               //Used for type conversion to pass to Serial2
     char _sessionTimeCBox[2];           //Used for retrieving the session time combobox
     
-    int _freq;
-    int _getFreq;
-    int _period;
     int _DRIVER1, _DRIVER2, _DRIVER3;
     int _PWM1, _PWM2, _PWM3;
     int _counter;
     double _progressBar;                //Displays status of progress bar ontop of progress bar
-    double _thisMinute;                 //Displays session time in minute ontop of progress bar   
-    int _graphInterval;            
+    double _thisMinute;                 //Displays session time in minute ontop of progress bar             
   };
 
 #endif
