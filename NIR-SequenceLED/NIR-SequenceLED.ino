@@ -197,8 +197,6 @@ void loop() {
     counter = 0;
     
   } else if (CP.CurrentPage() == 2){      //Session Page
-    //try removing if for page for page 2 and 5 for continuous recording of the functions
-    
     if (counter == 0){  
       CP.PrevSelection();
       counter = 2;
