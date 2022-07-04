@@ -31,19 +31,22 @@ class ControlPanel {
     static int CurrentPage();                                 //Returns the current page
     
     void LEDIndex();                                          //LED output control
-    void CurrentInt();                                        //Gets the current switch state (sw0-sw2) and updates stateArray
-    
+
     void StartSession();                                      //Starts the session
-    int GetSessionTime();                                     //Returns the selected session time
     void PrevSelection();                                     //Restores the previous button selections when returning to the same page in a single session
 
-    void LowMode();                                           //Low intensity mode
-    void MedMode();                                           //Medium intensity mode
-    void HighMode();                                          //High intensity mode
     void LEDOff();                                            //Turns off all LEDs
     void LEDOn();                                             //Turns on all LEDs
 
   private: 
+    void CurrentInt();                                        //Gets the current switch state (sw0-sw2) and updates stateArray
+
+    int GetSessionTime();                                     //Returns the selected session time
+    
+    void LowMode();                                           //Low intensity mode
+    void MedMode();                                           //Medium intensity mode
+    void HighMode();                                          //High intensity mode
+    
     //Static variables are used to store states throughout the runtime
     static int _pg;                     //Stores the current page
     static int _sessionTime;            //Stores the remaining time to run for the session

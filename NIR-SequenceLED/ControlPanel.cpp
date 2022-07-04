@@ -9,18 +9,18 @@
 #include <Nextion.h>
 
 //Static variables are used to store states throughout the runtime
-int ControlPanel::_pg = 0;                        //Stores the current page
-int ControlPanel::_sessionTime = 0;               //Stores the remaining time to run for the session
-int ControlPanel::_sessionInt = 0;                //Stores the intensity of the session (LOW/MED/HIGH)
-int ControlPanel::_startTime = 0;                 //Stores the time when session starts
-int ControlPanel::_oldSessionState = 0;           //Stores the previous state of the start button
-int ControlPanel::_sessionState = 0;              //Stores the state of the start button (ON/OFF) 
-bool ControlPanel::_onGoingSession = false;       //Stores the state of the current session (PAUSED/STOPPED)
-double ControlPanel::_pausedMinute = 0;           //Stores the amount of time past since pause 
+int     ControlPanel::_pg = 0;                        //Stores the current page
+int     ControlPanel::_sessionTime = 0;               //Stores the remaining time to run for the session
+int     ControlPanel::_sessionInt = 0;                //Stores the intensity of the session (LOW/MED/HIGH)
+int     ControlPanel::_startTime = 0;                 //Stores the time when session starts
+int     ControlPanel::_oldSessionState = 0;           //Stores the previous state of the start button
+int     ControlPanel::_sessionState = 0;              //Stores the state of the start button (ON/OFF) 
+bool    ControlPanel::_onGoingSession = false;        //Stores the state of the current session (PAUSED/STOPPED)
+double  ControlPanel::_pausedMinute = 0;              //Stores the amount of time past since pause 
 
 
 ControlPanel::ControlPanel(int DRIVER1, int DRIVER2, int DRIVER3){
-  _DRIVER1 = DRIVER1;    //625
+  _DRIVER1 = DRIVER1;   //625
   _DRIVER2 = DRIVER2;   //850
   _DRIVER3 = DRIVER3;   //940
 }
@@ -98,8 +98,7 @@ void ControlPanel::DisplayProgress(){                               //Updates pr
   if (this->_sessionState == 1 && this->_oldSessionState == 0 
                                && this->_onGoingSession == false){  //Session start
     _oldSessionState = 1;
-    cb0.getText(_sessionTimeCBox,2);
-    this->_sessionTime = atoi(_sessionTimeCBox);
+    GetSessionTime();
     this->_startTime = minute();
     
   } else if (this->_sessionState == 1){
@@ -114,7 +113,8 @@ void ControlPanel::DisplayProgress(){                               //Updates pr
       this->_onGoingSession = true;  
       _progressBar = ((_thisMinute - double(this->_startTime))/double(this->_sessionTime))*100;
       j0.setValue(uint32_t(_progressBar));
-      
+
+        
       Serial2.print("t1.txt=\"");
       Serial2.print(int(_thisMinute - double(this->_startTime)));
       Serial2.print(" min | ");
@@ -138,7 +138,7 @@ int ControlPanel::CurrentPage(){                              //Returns the curr
 }
 
 
-void ControlPanel::LEDIndex(){                  //LED output control
+void ControlPanel::LEDIndex(){                                //LED output control
   //LED Driver runs on inverse logic (5V - LOW)
   if (this->_sessionState == 1){
     CurrentInt();
@@ -172,9 +172,12 @@ void ControlPanel::StartSession(){                //Starts the session
 
 
 int ControlPanel::GetSessionTime(){               //Returns the selected session time
-  uint32_t sessionTime;
-  cb0.getValue(&sessionTime);
-  this->_sessionTime = sessionTime;
+  //uint32_t sessionTime;
+  //cb0.getValue(&sessionTime);
+  //this->_sessionTime = sessionTime;
+  cb0.getText(_sessionTimeCBox,2);                              
+   this->_sessionTime = atoi(_sessionTimeCBox);
+   
   return this->_sessionTime;
 }
 
@@ -199,7 +202,7 @@ void ControlPanel::LowMode(){
   digitalWrite(_DRIVER3,LOW);
   delayMicroseconds(3330);
   LEDOff();
-  delay(30);                                      //To minus 1 if vTaskDelay is added in secondcore
+  delay(30);                                      
 }
 
 
@@ -214,7 +217,7 @@ void ControlPanel::MedMode(){
   digitalWrite(_DRIVER3,LOW);
   delayMicroseconds(4500);
   LEDOff();
-  delayMicroseconds(26500);                     //To minus 100 if vTaskDelay is added in secondcore
+  delayMicroseconds(26500);                     
 }
 
 
@@ -229,7 +232,7 @@ void ControlPanel::HighMode(){
   digitalWrite(_DRIVER3,LOW);
   delayMicroseconds(6670);
   LEDOff();
-  delay(20);                                    //To minus 1 if vTaskDelay is added in secondcore
+  delay(20);                                    
 }
 
 void ControlPanel::LEDOff(){                      //Turns off all LEDs

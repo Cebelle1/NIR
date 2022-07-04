@@ -69,6 +69,7 @@ NexTouch *nex_listen_list[] = {
   NULL
 };
 
+
 //OTA Webserver
 void StartServer(){
   /*use mdns for host name resolution*/
@@ -118,14 +119,14 @@ void StartServer(){
 
 
 void setup() {
-  Serial.begin(115200);
-  Serial2.begin(9600);
-
   pinMode(DRIVER1, OUTPUT);
   pinMode(DRIVER2, OUTPUT);
   pinMode(DRIVER3, OUTPUT);
   
   CP.LEDOff();  //Turn off all DRIVERs
+  
+  Serial.begin(115200);
+  Serial2.begin(9600);
   
   CP.DisplayPage(3);
   delay(3000);
@@ -186,7 +187,6 @@ void loop() {
   
   nexLoop(nex_listen_list);             //Listens for button events
   
-  Serial.println("Running");
   
   if (CP.CurrentPage() == 0){           //Home Page
     //REMOVE THIS LINE IN NORMAL CODE, NO SENSORS ATTACHED WILL STOP THE CODE WITHOUT ANY ERROR THROWN
