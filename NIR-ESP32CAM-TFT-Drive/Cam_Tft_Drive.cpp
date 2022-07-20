@@ -2,7 +2,7 @@
 #include <Arduino.h>
 
 Cam_Tft_Drive::Cam_Tft_Drive(){
-  _ssid = "CebelleLaptop";
+  _ssid = "SyahsLaptop";
   _password = "123456789";
 }
 
@@ -111,8 +111,8 @@ void Cam_Tft_Drive::saveToSD(){
     return;
     
   }else{
-    String path = String(checkDir())+ "/picture" + String(_pictureNumber) +".jpg";
     _pictureNumber = EEPROM.read(0) + 1;
+    String path = String(checkDir())+ "/picture" + String(_pictureNumber) +".jpg";
     fs::FS &fs = SD_MMC; 
     Serial.printf("Picture file name: %s\n", path.c_str());
     File file = fs.open(path.c_str(), FILE_WRITE);
@@ -137,13 +137,17 @@ void Cam_Tft_Drive::saveToSD(){
 //---------------Send to Drive functions-------------//
 
 String Cam_Tft_Drive::sendCapturedImage() {
-  
-  long int StartTime=millis();
+  int _timeout = 0;
+  long int StartTime = millis();
+  WiFi.begin(_ssid, _password);
   while (WiFi.status() != WL_CONNECTED) 
   {
-    WiFi.begin(_ssid, _password); 
     delay(500);
     Serial.print(".");
+    _timeout = millis();
+    if(_timeout - StartTime > 5000){
+      break;
+    }
   } 
   
   String myScript = "/macros/s/AKfycbxpeW2FOdQeUIaQmyhjKsQGhVXQVgwMRZ9BNRD3dS7krf5JLP7yMuK_Zn_O2luowq11/exec";
