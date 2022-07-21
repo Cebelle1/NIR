@@ -72,25 +72,24 @@ void setup() {
   EEPROM.begin(EEPROM_SIZE);
 
   if (EEPROM.read(1) == 0){             //Stream camera
-      
-    TJpgDec.setJpgScale(1);           
-    TJpgDec.setSwapBytes(true);
-    TJpgDec.setCallback(tft_output);
+    //Init camera at display resolution 
+    config.frame_size = FRAMESIZE_QQVGA; // 120 x 160
+    config.jpeg_quality = 10;
+    config.fb_count = 2;
+    
     //Init display
     tft.begin();
     tft.setRotation(1);
     tft.setTextColor(0xFFFF, 0x0000);
     tft.fillScreen(TFT_BLACK);
     tft.setFreeFont(FSB9);
-
-    //Init camera at display resolution 
-    config.frame_size = FRAMESIZE_QQVGA; // 120 x 160
-    config.jpeg_quality = 10;
-    config.fb_count = 2;
+    
+    TJpgDec.setJpgScale(1);           
+    TJpgDec.setSwapBytes(true);
+    TJpgDec.setCallback(tft_output);
     
   } else if (EEPROM.read(1) == 1){    //Take photo and save to sd
     //Init camera at bigger resolution
-    
     config.frame_size = FRAMESIZE_SVGA;    //800 x 600
     config.jpeg_quality = 12;
     config.fb_count = 1;
