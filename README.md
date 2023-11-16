@@ -38,7 +38,7 @@ https://github.com/Cebelle1/NIR/assets/84433822/b77787c7-5640-45d7-80c1-5a912efe
 
 ### 5) Time Setting Page
 ![image](https://github.com/Cebelle1/NIR/assets/84433822/057e4da1-284e-49d9-827e-5eb2073d9f75)
-![image](https://github.com/Cebelle1/NIR/assets/84433822/f5678533-9f40-4227-90be-40679bfecbd9)
+
 ### Steps to use the Nextion
 ![image](https://github.com/Cebelle1/NIR/assets/84433822/cd911212-dde0-4639-a59e-580b165792cc)
 ![image](https://github.com/Cebelle1/NIR/assets/84433822/3312f29c-91fd-4db1-9303-f4675520da1a)
