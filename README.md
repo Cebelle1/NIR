@@ -8,18 +8,18 @@ PCB Schematics are found in "EasyEDA".
 Nextion Sceen Display file found in "Nextion".
 
 # Overall Appearance
-<p align="center">
+
 ![image width=300](https://github.com/Cebelle1/NIR/assets/84433822/74f089b1-b693-4b7d-925e-833d3acae5fb)
-</p>
+
 
 # Hardware
-<p align="center">
+
 ## Simplified Schematic
 ![image](https://github.com/Cebelle1/NIR/assets/84433822/3c92e068-ef10-4512-b621-3499a1d054bd)
 
 ## PCB Design Info
 ![image](https://github.com/Cebelle1/NIR/assets/84433822/89f528ce-31cf-48c0-aa30-fbc2fb803d5e)
-</p>
+
 
 
 # Nextion GUI
