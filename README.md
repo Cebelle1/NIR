@@ -8,7 +8,7 @@ PCB Schematics are found in "EasyEDA".
 Nextion Sceen Display file found in "Nextion".
 
 # Overall Appearance
-![image](https://github.com/Cebelle1/NIR/assets/84433822/74f089b1-b693-4b7d-925e-833d3acae5fb)
+![image](https://github.com/Cebelle1/NIR/assets/84433822/74f089b1-b693-4b7d-925e-833d3acae5fb){:width="300"}
 
 # Hardware
 
@@ -17,7 +17,7 @@ Nextion Sceen Display file found in "Nextion".
 
 ## PCB Design Info
 ![image](https://github.com/Cebelle1/NIR/assets/84433822/89f528ce-31cf-48c0-aa30-fbc2fb803d5e)
-![image](https://github.com/Cebelle1/NIR/assets/84433822/4871a3db-b3d0-4c13-85b1-0ac6b3e7c6ff)
+
 
 
 # Nextion GUI
@@ -29,7 +29,7 @@ https://github.com/Cebelle1/NIR/assets/84433822/b77787c7-5640-45d7-80c1-5a912efe
 
 ### 3) Home Page
 ![image](https://github.com/Cebelle1/NIR/assets/84433822/2eaaf838-fc24-4c2e-8166-d6375c53b0a2)
-![image](https://github.com/Cebelle1/NIR/assets/84433822/d960e0cb-9c71-4813-afd4-3bc18e3ffc20)
+
 
 ### 4) Control Page
 ![image](https://github.com/Cebelle1/NIR/assets/84433822/3987867d-cf0f-4e9d-8dbf-0af2e5a68012)
@@ -41,8 +41,8 @@ https://github.com/Cebelle1/NIR/assets/84433822/b77787c7-5640-45d7-80c1-5a912efe
 ![image](https://github.com/Cebelle1/NIR/assets/84433822/cd911212-dde0-4639-a59e-580b165792cc)
 ![image](https://github.com/Cebelle1/NIR/assets/84433822/3312f29c-91fd-4db1-9303-f4675520da1a)
 ![image](https://github.com/Cebelle1/NIR/assets/84433822/fac78b57-d39c-4048-b201-0725dc65a4a5)
-![image](https://github.com/Cebelle1/NIR/assets/84433822/f111837e-7940-42ce-aa63-7978a70d560f)
 ![image](https://github.com/Cebelle1/NIR/assets/84433822/149ca96c-ea46-4b5f-b652-993c10ae865b)
+![image](https://github.com/Cebelle1/NIR/assets/84433822/f111837e-7940-42ce-aa63-7978a70d560f)
 ![image](https://github.com/Cebelle1/NIR/assets/84433822/c491cc6e-4bb2-4aee-9a5a-1bb075b2bc5b)
 
 
