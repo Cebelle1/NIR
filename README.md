@@ -15,7 +15,7 @@ Nextion Sceen Display file found in "Nextion".
 # Hardware
 
 ## Simplified Schematic
-![](https://github.com/Cebelle1/NIR/assets/84433822/3c92e068-ef10-4512-b621-3499a1d054bd =300x500)
+![image|300x500](https://github.com/Cebelle1/NIR/assets/84433822/3c92e068-ef10-4512-b621-3499a1d054bd )
 
 ## PCB Design Info
 ![image](https://github.com/Cebelle1/NIR/assets/84433822/89f528ce-31cf-48c0-aa30-fbc2fb803d5e)
